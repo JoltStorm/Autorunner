@@ -1,17 +1,37 @@
+using System;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
     //TODO: add flip, add rotation, add jump
-
     private Rigidbody2D rb;
+
+    [Header("Configuration")]
+    [SerializeField] private float jumpHeight;
+
 
     private InputAction flip;
     private InputAction jump;
 
+    [Header("Debug")]
     [SerializeField] bool hasFlipped;
     [SerializeField] bool hasJumped;
+    Vector2 originalPos;
+    Vector2 lastPos;
+
+    private void Jump()
+    {
+        if (hasJumped) return;
+        hasJumped = true;
+        //print("Jump!");
+
+        //sqrt(2 * gravity acceleration * height) gets us the velocity needed to hit jump height
+        //well in theory... in practice it position seems to be off by a couple hundreths and there isn't much i can really do about it
+        float initialVelocity = (float)Math.Sqrt(2 * (-Physics.gravity.y * Math.Abs(rb.gravityScale)) * jumpHeight);
+        rb.AddForce(new Vector2(0, initialVelocity), ForceMode2D.Impulse);
+    }
 
     void Start()
     {
@@ -19,7 +39,6 @@ public class PlayerController : MonoBehaviour
 
         flip = InputSystem.actions.FindAction("Player/Flip");
         jump = InputSystem.actions.FindAction("Player/Jump");
-
     }
 
     void Update()
@@ -32,9 +51,12 @@ public class PlayerController : MonoBehaviour
         }
         if (jump.IsPressed() && !hasJumped)
         {
-            print("jump");
-            hasJumped = true;
+            Jump();
         }
+
+        //Debug for jump height
+        /*if (lastPos != null && transform.position.y >= originalPos.y + jumpHeight) print("Reached jump height!");
+        lastPos = transform.position;*/
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -44,6 +66,7 @@ public class PlayerController : MonoBehaviour
             //reset hasFlipped and hasJumped once player touches floor
             hasFlipped = false;
             hasJumped = false;
+            originalPos = transform.position;
         }
     }
 }
