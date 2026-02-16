@@ -26,7 +26,7 @@ public class GameOverScreen : MonoBehaviour
 
 	void Update()
 	{
-		if (GameState.Dead) canvasGroup.alpha = 1;
-		else canvasGroup.alpha = 0;
+		canvasGroup.alpha = GameState.Dead ? 1 : 0;
+		canvasGroup.blocksRaycasts = GameState.Dead;
 	}
 }
