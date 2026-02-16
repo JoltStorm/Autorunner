@@ -5,12 +5,15 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    //TODO: add flip, add rotation, add jump
+    //TODO: 
     private Rigidbody2D rb;
+    private GameObject sprite;
 
     [Header("Configuration")]
     [SerializeField] private float jumpHeight;
+    [SerializeField] private Vector3 rotationVector;
 
+    //InputActions
     private InputAction flip;
     private InputAction jump;
 
@@ -22,7 +25,6 @@ public class PlayerController : MonoBehaviour
     {
         if (hasJumped || hasFlipped) return;
         hasJumped = true;
-        //print("Jump!");
 
         //sqrt(2 * gravity acceleration * height) gets us the velocity needed to hit jump height
         //well in theory... in practice it position seems to be off by a couple hundreths and there isn't much i can really do about it
@@ -34,13 +36,19 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         rb = gameObject.GetComponent<Rigidbody2D>();
+        sprite = transform.Find("s_player").gameObject;
 
         flip = InputSystem.actions.FindAction("Player/Flip");
         jump = InputSystem.actions.FindAction("Player/Jump");
+
+
     }
 
     void Update()
     {
+        //rotate player sprite object using rotationVector
+        sprite.transform.Rotate(rotationVector);
+
         if (flip.WasPressedThisDynamicUpdate() && !hasFlipped)
         {
             //invert player gravity
