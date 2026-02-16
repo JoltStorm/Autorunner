@@ -11,7 +11,6 @@ public class PlayerController : MonoBehaviour
     [Header("Configuration")]
     [SerializeField] private float jumpHeight;
 
-
     private InputAction flip;
     private InputAction jump;
 
